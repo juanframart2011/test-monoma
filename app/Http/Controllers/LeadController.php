@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Lead;
+use App\Http\Requests\CreateLeadRequest;
 
 class LeadController extends Controller
 {
@@ -17,5 +18,26 @@ class LeadController extends Controller
         });
 
         return response()->json(['meta' => ['success' => true, 'errors' => []], 'data' => $leads]);
+    }
+
+    public function store(CreateLeadRequest $request)
+    {
+        // Como el CreateLeadRequest ya valida los datos,
+        // puedes estar seguro de que los datos son correctos aquí.
+
+        $lead = Lead::create([
+            'name' => $request->name,
+            'source' => $request->source,
+            'owner' => $request->owner,
+            'created_by' => auth()->id(),  // El usuario autenticado que crea el lead
+        ]);
+
+        return response()->json([
+            'meta' => [
+                'success' => true,
+                'errors' => []
+            ],
+            'data' => $lead
+        ], 201);
     }
 }
